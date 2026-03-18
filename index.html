@@ -26,98 +26,46 @@
     --sans: 'Outfit', sans-serif;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: var(--sans); background: var(--bg); color: var(--text);
-    min-height: 100vh; -webkit-font-smoothing: antialiased;
-  }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
- 
-  .loading-screen { display:flex; align-items:center; justify-content:center; height:100vh; }
+  .loading-screen { display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; gap:16px; }
   .spinner { width:32px; height:32px; border:3px solid #333; border-top-color:var(--amber); border-radius:50%; animation:spin .8s linear infinite; }
- 
-  /* LOGIN */
-  .login-wrap {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-height:100vh; padding:20px;
-    background: radial-gradient(ellipse at 50% 0%, rgba(232,160,35,0.04) 0%, transparent 60%), var(--bg);
-  }
-  .login-card {
-    background:var(--surface); border:1px solid rgba(255,255,255,0.08);
-    border-radius:20px; padding:44px 32px; max-width:400px; width:100%;
-    text-align:center; animation:slideUp .5s ease; box-shadow:0 20px 60px rgba(0,0,0,0.4);
-  }
+  .loading-text { color:var(--text-muted); font-size:13px; letter-spacing:1px; }
+  .login-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; background: radial-gradient(ellipse at 50% 0%, rgba(232,160,35,0.04) 0%, transparent 60%), var(--bg); }
+  .login-card { background:var(--surface); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:44px 32px; max-width:400px; width:100%; text-align:center; animation:slideUp .5s ease; box-shadow:0 20px 60px rgba(0,0,0,0.4); }
   .login-title { font-size:24px; font-weight:800; letter-spacing:5px; color:var(--amber); margin-bottom:4px; }
   .login-sub { font-size:13px; color:var(--text-muted); margin-bottom:32px; letter-spacing:1px; }
   .input-group { margin-bottom:18px; text-align:left; }
   .input-label { display:block; font-size:11px; font-weight:700; color:var(--text-muted); letter-spacing:2px; margin-bottom:7px; }
-  .input-field {
-    width:100%; padding:13px 15px; background:rgba(255,255,255,0.05);
-    border:1px solid var(--border-light); border-radius:9px; color:var(--text);
-    font-size:15px; font-family:var(--sans); outline:none; transition:border-color .2s;
-  }
+  .input-field { width:100%; padding:13px 15px; background:rgba(255,255,255,0.05); border:1px solid var(--border-light); border-radius:9px; color:var(--text); font-size:15px; font-family:var(--sans); outline:none; transition:border-color .2s; }
   .input-field:focus { border-color:var(--amber); }
   .input-field::placeholder { color:var(--text-ghost); }
-  .btn-primary {
-    width:100%; padding:15px; background:var(--amber); border:none; border-radius:10px;
-    color:#0F0F0F; font-weight:700; font-size:14px; cursor:pointer; font-family:var(--sans);
-    letter-spacing:1.5px; margin-top:8px; box-shadow:0 4px 16px rgba(232,160,35,0.3);
-    transition:transform .15s, box-shadow .15s;
-  }
+  .btn-primary { width:100%; padding:15px; background:var(--amber); border:none; border-radius:10px; color:#0F0F0F; font-weight:700; font-size:14px; cursor:pointer; font-family:var(--sans); letter-spacing:1.5px; margin-top:8px; box-shadow:0 4px 16px rgba(232,160,35,0.3); transition:transform .15s, box-shadow .15s; }
   .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(232,160,35,0.4); }
   .btn-primary:active { transform:translateY(0); }
   .btn-primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
   .error-msg { color:#FCA5A5; font-size:13px; margin:8px 0; font-weight:500; }
   .regulation-note { color:var(--text-ghost); font-size:11px; margin-top:24px; letter-spacing:.5px; }
- 
-  /* SHELL */
-  .app-header {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:14px 20px; border-bottom:1px solid var(--border);
-    background:rgba(15,15,15,0.95); backdrop-filter:blur(20px);
-    position:sticky; top:0; z-index:100;
-  }
+  .app-header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--border); background:rgba(15,15,15,0.95); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100; }
   .header-left { display:flex; align-items:center; gap:12px; }
   .header-brand { font-size:15px; font-weight:800; letter-spacing:3px; color:var(--amber); }
   .header-right { display:flex; align-items:center; gap:12px; }
   .driver-badge { font-size:12px; color:var(--text-dim); font-weight:500; background:var(--amber-dim); padding:4px 10px; border-radius:6px; }
   .admin-badge { font-size:10px; color:var(--amber); font-weight:700; letter-spacing:1.5px; background:rgba(232,160,35,0.12); padding:3px 8px; border-radius:4px; }
-  .btn-signout {
-    background:rgba(255,255,255,0.06); border:1px solid var(--border-light);
-    color:var(--text-dim); padding:7px 14px; border-radius:7px; cursor:pointer;
-    font-size:12px; font-weight:600; font-family:var(--sans); transition:all .2s;
-  }
+  .btn-signout { background:rgba(255,255,255,0.06); border:1px solid var(--border-light); color:var(--text-dim); padding:7px 14px; border-radius:7px; cursor:pointer; font-size:12px; font-weight:600; font-family:var(--sans); transition:all .2s; }
   .btn-signout:hover { background:rgba(255,255,255,0.1); }
-  .app-nav {
-    display:flex; gap:2px; padding:8px 16px; border-bottom:1px solid var(--border);
-    background:rgba(15,15,15,0.6); overflow-x:auto; -webkit-overflow-scrolling:touch;
-  }
-  .nav-btn {
-    display:flex; align-items:center; gap:6px; padding:10px 16px; border-radius:8px;
-    border:none; background:transparent; color:var(--text-muted); cursor:pointer;
-    font-size:13px; font-weight:600; font-family:var(--sans); white-space:nowrap; transition:all .2s;
-  }
+  .app-nav { display:flex; gap:2px; padding:8px 16px; border-bottom:1px solid var(--border); background:rgba(15,15,15,0.6); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .nav-btn { display:flex; align-items:center; gap:6px; padding:10px 16px; border-radius:8px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:13px; font-weight:600; font-family:var(--sans); white-space:nowrap; transition:all .2s; }
   .nav-btn:hover { background:rgba(255,255,255,0.03); }
   .nav-btn.active { background:var(--amber-glow); color:var(--amber); }
   .app-main { padding:16px 16px 90px; max-width:660px; margin:0 auto; }
-  .app-footer {
-    position:fixed; bottom:0; left:0; right:0; padding:10px 16px; text-align:center;
-    background:rgba(10,10,11,0.95); backdrop-filter:blur(10px);
-    border-top:1px solid rgba(255,255,255,0.04); color:var(--text-ghost); font-size:11px; letter-spacing:.5px;
-  }
- 
-  /* CARDS */
+  .app-footer { position:fixed; bottom:0; left:0; right:0; padding:10px 16px; text-align:center; background:rgba(10,10,11,0.95); backdrop-filter:blur(10px); border-top:1px solid rgba(255,255,255,0.04); color:var(--text-ghost); font-size:11px; letter-spacing:.5px; }
   .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px; animation:fadeIn .3s ease; }
   .card-title { font-size:13px; font-weight:700; color:var(--amber); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
- 
-  /* TIMER */
-  .timer-card {
-    background:linear-gradient(145deg, rgba(232,160,35,0.06) 0%, rgba(15,15,15,0.8) 100%);
-    border:1px solid rgba(232,160,35,0.15); border-radius:18px;
-    padding:36px 24px; text-align:center; margin-bottom:16px; animation:fadeIn .4s ease;
-  }
+  .timer-card { background:linear-gradient(145deg, rgba(232,160,35,0.06) 0%, rgba(15,15,15,0.8) 100%); border:1px solid rgba(232,160,35,0.15); border-radius:18px; padding:36px 24px; text-align:center; margin-bottom:16px; animation:fadeIn .4s ease; }
   .timer-status { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px; }
   .status-dot { width:12px; height:12px; border-radius:50%; transition:all .3s; }
   .status-dot.driving { background:var(--green); box-shadow:0 0 14px var(--green); animation:pulse 2s infinite; }
@@ -127,18 +75,12 @@
   .timer-display { font-size:58px; font-weight:700; font-family:var(--mono); letter-spacing:2px; color:var(--text); line-height:1; margin:10px 0; }
   .timer-sublabel { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:2px; margin:8px 0 26px; }
   .timer-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-  .btn-timer {
-    padding:14px 28px; border:none; border-radius:10px; color:#0F0F0F;
-    font-weight:700; font-size:14px; cursor:pointer; font-family:var(--sans);
-    letter-spacing:1px; transition:all .2s; box-shadow:0 4px 14px rgba(0,0,0,0.3);
-  }
+  .btn-timer { padding:14px 28px; border:none; border-radius:10px; color:#0F0F0F; font-weight:700; font-size:14px; cursor:pointer; font-family:var(--sans); letter-spacing:1px; transition:all .2s; box-shadow:0 4px 14px rgba(0,0,0,0.3); }
   .btn-timer:hover { transform:translateY(-1px); }
   .btn-timer:active { transform:translateY(0); }
   .btn-timer.go { background:var(--green); }
   .btn-timer.pause { background:var(--amber); }
   .btn-timer.stop { background:var(--red); color:#fff; }
- 
-  /* GAUGES */
   .gauge-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
   .gauge { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
   .gauge-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
@@ -146,8 +88,6 @@
   .gauge-track { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
   .gauge-fill { height:100%; border-radius:2px; transition:width .6s ease; }
   .gauge-max { font-size:10px; color:#4B5563; margin-top:6px; }
- 
-  /* ALERTS */
   .alert { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; border:1px solid; margin-bottom:12px; animation:fadeIn .3s ease; }
   .alert.critical { background:rgba(220,38,38,0.12); border-color:var(--red); }
   .alert.critical span:last-child { color:#FCA5A5; font-weight:600; font-size:13px; }
@@ -155,26 +95,18 @@
   .alert.warning span:last-child { color:#FCD34D; font-weight:600; font-size:13px; }
   .alert.success { background:rgba(34,197,94,0.1); border-color:var(--green); }
   .alert.success span:last-child { color:#86EFAC; font-weight:600; font-size:13px; }
- 
-  /* SESSIONS */
   .session-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
   .session-time { font-size:13px; color:var(--text-dim); }
   .session-dur { font-size:15px; font-weight:700; color:var(--text); font-family:var(--mono); }
   .break-badge { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:4px; background:var(--amber-dim); color:var(--amber); font-size:11px; font-weight:600; }
- 
-  /* HISTORY */
   .history-row { display:flex; justify-content:space-between; align-items:center; padding:14px 12px; border-radius:8px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.04); transition:background .2s; }
   .history-row:hover { background:rgba(255,255,255,0.03); }
   .history-row.selected { background:var(--amber-dim); }
   .history-date { font-size:14px; font-weight:600; color:var(--text); }
   .history-meta { font-size:12px; color:var(--text-muted); margin-left:10px; }
   .history-total { font-size:16px; font-weight:700; color:var(--amber); font-family:var(--mono); }
- 
-  /* EXPORT */
   .range-btn { padding:10px 20px; border:1px solid var(--border-light); border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; font-family:var(--sans); transition:all .2s; background:rgba(255,255,255,0.05); color:#D1D5DB; }
   .range-btn.active { background:var(--amber); color:#0F0F0F; border-color:var(--amber); }
- 
-  /* RULES */
   .rules-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .rule-item { display:flex; flex-direction:column; gap:4px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; }
   .rule-item small { color:var(--text-dim); font-size:11px; text-transform:uppercase; letter-spacing:1px; }
@@ -182,8 +114,6 @@
   .rule-block { margin-bottom:16px; padding:14px; background:rgba(255,255,255,0.02); border-radius:8px; color:#D1D5DB; font-size:14px; line-height:1.7; }
   .rule-block h4 { color:var(--amber); font-size:14px; font-weight:700; margin-bottom:6px; }
   .rule-disclaimer { margin-top:20px; padding:12px; background:var(--amber-dim); border-radius:8px; border-left:3px solid var(--amber); font-size:13px; color:#D1D5DB; }
- 
-  /* ADMIN */
   .admin-table { width:100%; border-collapse:collapse; }
   .admin-table th { text-align:left; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; padding:10px 12px; border-bottom:1px solid var(--border-light); }
   .admin-table td { padding:12px; border-bottom:1px solid var(--border); font-size:13px; color:var(--text-dim); vertical-align:middle; }
@@ -198,8 +128,6 @@
   .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; }
   .stat-value { font-size:24px; font-weight:700; font-family:var(--mono); color:var(--amber); }
   .stat-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px; }
- 
-  /* RESPONSIVE */
   @media (max-width:480px) {
     .timer-display { font-size:42px; }
     .gauge-row { grid-template-columns:1fr; }
@@ -212,276 +140,197 @@
 </head>
 <body>
 <div id="app"></div>
- 
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
- 
+
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
- 
-// ── CONFIG ───────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════════
+//  ▶▶▶  PASTE YOUR FIREBASE CONFIG BELOW  ◀◀◀
+// ══════════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyAfKo-ryRsXVKZ9vOjzRHTGhDSihYcOBIo",
+  authDomain: "jamadatabase.firebaseapp.com",
+  projectId: "jamadatabase",
+  storageBucket: "jamadatabase.firebasestorage.app",
+  messagingSenderId: "308489057570",
+  appId: "1:308489057570:web:2615b2740871b56a8be17b"
+};
+// ══════════════════════════════════════════════════════════════
+
+firebase.initializeApp(firebaseConfig);
+const firestore = firebase.firestore();
+
 const ADMIN = { email: "jama.mohammed@ymail.com", password: "Hamzah2033?" };
-const RULES = {
-  maxCont: 4.5*3600, reqBreak: 45*60, maxDaily: 9*3600,
-  maxExtDaily: 10*3600, maxWeekly: 56*3600, maxFortnight: 90*3600, minRest: 11*3600,
+const RULES = { maxCont:4.5*3600, reqBreak:45*60, maxDaily:9*3600, maxExtDaily:10*3600, maxWeekly:56*3600, maxFortnight:90*3600, minRest:11*3600 };
+
+// ── CLOUD DB (Firestore) ─────────────────────────────────
+const Cloud = {
+  async get(k) { try { const d=await firestore.collection("data").doc(k).get(); return d.exists?d.data().v:null; } catch(e){console.error("Cloud.get:",k,e);return null;} },
+  async set(k,v) { try { await firestore.collection("data").doc(k).set({v,t:Date.now()}); } catch(e){console.error("Cloud.set:",k,e);} },
+  async del(k) { try { await firestore.collection("data").doc(k).delete(); } catch(e){console.error("Cloud.del:",k,e);} },
 };
- 
-// ── STORAGE ──────────────────────────────────────────────
-const DB = {
-  get(k) { try { return JSON.parse(localStorage.getItem("hq_"+k)); } catch { return null; } },
-  set(k,v) { localStorage.setItem("hq_"+k, JSON.stringify(v)); },
-  del(k) { localStorage.removeItem("hq_"+k); },
+
+// ── LOCAL DB (localStorage — active timer only) ──────────
+const Local = {
+  get(k){try{return JSON.parse(localStorage.getItem("hq_"+k));}catch{return null;}},
+  set(k,v){try{localStorage.setItem("hq_"+k,JSON.stringify(v));}catch{}},
+  del(k){try{localStorage.removeItem("hq_"+k);}catch{}},
 };
- 
+
 // ── UTILS ────────────────────────────────────────────────
-const fmt = s => {
-  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), ss=Math.floor(s%60);
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
-};
-const fmtDate = iso => new Date(iso).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
-const fmtDT = iso => new Date(iso).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-const today = () => new Date().toISOString().split("T")[0];
-const weekStart = d => {
-  const dt=new Date(d), day=dt.getDay(), diff=dt.getDate()-day+(day===0?-6:1);
-  dt.setDate(diff); dt.setHours(0,0,0,0); return dt;
-};
- 
-const Logo = ({size=28}) => (
-  <svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-    <circle cx="24" cy="24" r="23" stroke="#E8A023" strokeWidth="2"/>
-    <path d="M12 30 L18 20 L24 24 L30 16 L36 22" stroke="#E8A023" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="24" cy="24" r="3" fill="#E8A023"/>
-  </svg>
-);
- 
+const fmt=s=>{const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=Math.floor(s%60);return`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;};
+const fmtDate=iso=>new Date(iso).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+const fmtDT=iso=>new Date(iso).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+const today=()=>new Date().toISOString().split("T")[0];
+const weekStart=d=>{const dt=new Date(d),day=dt.getDay(),diff=dt.getDate()-day+(day===0?-6:1);dt.setDate(diff);dt.setHours(0,0,0,0);return dt;};
+
+const Logo=({size=28})=>(<svg width={size} height={size} viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" stroke="#E8A023" strokeWidth="2"/><path d="M12 30 L18 20 L24 24 L30 16 L36 22" stroke="#E8A023" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/><circle cx="24" cy="24" r="3" fill="#E8A023"/></svg>);
+
 // ── NOTIFICATIONS ────────────────────────────────────────
-const notify = (title, body, tag) => {
-  if (!("Notification" in window) || Notification.permission !== "granted") return;
-  try {
-    new Notification(title, {
-      body, tag,
-      icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>",
-      requireInteraction: true,
-    });
-  } catch(e) { console.log("Notification error:", e); }
-};
- 
-const requestNotifPermission = async () => {
-  if (!("Notification" in window)) return false;
-  if (Notification.permission === "granted") return true;
-  if (Notification.permission === "denied") return false;
-  const result = await Notification.requestPermission();
-  return result === "granted";
-};
- 
-// Track which notifications have already fired this session to avoid spam
-const notifiedRef = { current: new Set() };
-const fireIfNew = (key, title, body) => {
-  if (notifiedRef.current.has(key)) return;
-  notifiedRef.current.add(key);
-  notify(title, body, key);
-};
-const resetNotified = (prefix) => {
-  for (const k of notifiedRef.current) { if (k.startsWith(prefix)) notifiedRef.current.delete(k); }
-};
- 
+const notify=(title,body,tag)=>{if(!("Notification"in window)||Notification.permission!=="granted")return;try{new Notification(title,{body,tag,requireInteraction:true});}catch{}};
+const requestNotifPermission=async()=>{if(!("Notification"in window))return false;if(Notification.permission==="granted")return true;if(Notification.permission==="denied")return false;return(await Notification.requestPermission())==="granted";};
+const notifiedRef={current:new Set()};
+const fireIfNew=(k,t,b)=>{if(!notifiedRef.current.has(k)){notifiedRef.current.add(k);notify(t,b,k);}};
+const resetNotified=p=>{for(const k of notifiedRef.current){if(k.startsWith(p))notifiedRef.current.delete(k);}};
+
 // ── LOGIN ────────────────────────────────────────────────
-function LoginPage({ onLogin }) {
-  const [tab, setTab] = useState("driver");
-  const [name, setName] = useState(""); const [pin, setPin] = useState("");
-  const [email, setEmail] = useState(""); const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
- 
-  const driverLogin = () => {
-    if (!name.trim()||!pin.trim()) return setError("Enter name and PIN");
-    if (pin.length<4) return setError("PIN must be 4+ digits");
-    const drivers = DB.get("drivers") || {};
-    const key = name.trim().toLowerCase();
-    const d = drivers[key];
-    if (!d) return setError("Driver not found — contact your admin");
-    if (d.pin !== pin) return setError("Incorrect PIN");
-    if (d.disabled) return setError("Account disabled — contact admin");
-    onLogin({name:d.name, id:key, role:"driver"});
+function LoginPage({onLogin}){
+  const[tab,setTab]=useState("driver");
+  const[name,setName]=useState("");const[pin,setPin]=useState("");
+  const[email,setEmail]=useState("");const[password,setPassword]=useState("");
+  const[error,setError]=useState("");const[loading,setLoading]=useState(false);
+
+  const driverLogin=async()=>{
+    if(!name.trim()||!pin.trim())return setError("Enter name and PIN");
+    if(pin.length<4)return setError("PIN must be 4+ digits");
+    setLoading(true);setError("");
+    const drivers=(await Cloud.get("drivers"))||{};
+    const key=name.trim().toLowerCase(),d=drivers[key];
+    if(!d){setLoading(false);return setError("Driver not found — contact your admin");}
+    if(d.pin!==pin){setLoading(false);return setError("Incorrect PIN");}
+    if(d.disabled){setLoading(false);return setError("Account disabled — contact admin");}
+    setLoading(false);onLogin({name:d.name,id:key,role:"driver"});
   };
- 
-  const adminLogin = () => {
-    if (!email.trim()||!password.trim()) return setError("Enter email and password");
-    if (email.trim().toLowerCase()===ADMIN.email.toLowerCase() && password===ADMIN.password)
+
+  const adminLogin=()=>{
+    if(!email.trim()||!password.trim())return setError("Enter email and password");
+    if(email.trim().toLowerCase()===ADMIN.email.toLowerCase()&&password===ADMIN.password)
       onLogin({name:"Admin",id:"admin",role:"admin"});
     else setError("Invalid admin credentials");
   };
- 
-  return (
-    <div className="login-wrap">
-      <div className="login-card">
-        <div style={{marginBottom:20}}><Logo size={48}/></div>
-        <div className="login-title">HAULAGE HQ</div>
-        <div className="login-sub">Driving Hours Tracker</div>
-        <div style={{display:"flex",gap:4,marginBottom:24,background:"rgba(255,255,255,0.04)",borderRadius:8,padding:3}}>
-          {[["driver","🚛 Driver"],["admin","🔐 Admin"]].map(([k,l])=>(
-            <button key={k} onClick={()=>{setTab(k);setError("");}}
-              style={{flex:1,padding:"9px 0",border:"none",borderRadius:6,cursor:"pointer",
-                fontFamily:"var(--sans)",fontSize:13,fontWeight:600,transition:"all .2s",
-                background:tab===k?"var(--amber)":"transparent",color:tab===k?"#0F0F0F":"#6B7280"}}>{l}</button>
-          ))}
-        </div>
-        {tab==="driver" ? (<>
-          <div className="input-group"><label className="input-label">DRIVER NAME</label>
-            <input className="input-field" value={name} onChange={e=>setName(e.target.value)} placeholder="As registered by admin" onKeyDown={e=>e.key==="Enter"&&driverLogin()}/></div>
-          <div className="input-group"><label className="input-label">PIN</label>
-            <input className="input-field" type="password" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,""))} placeholder="4+ digit PIN" maxLength={8} onKeyDown={e=>e.key==="Enter"&&driverLogin()}/></div>
-          {error&&<p className="error-msg">{error}</p>}
-          <button className="btn-primary" onClick={driverLogin}>SIGN IN</button>
-        </>) : (<>
-          <div className="input-group"><label className="input-label">EMAIL</label>
-            <input className="input-field" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Admin email" onKeyDown={e=>e.key==="Enter"&&adminLogin()}/></div>
-          <div className="input-group"><label className="input-label">PASSWORD</label>
-            <input className="input-field" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Password" onKeyDown={e=>e.key==="Enter"&&adminLogin()}/></div>
-          {error&&<p className="error-msg">{error}</p>}
-          <button className="btn-primary" onClick={adminLogin}>ADMIN LOGIN</button>
-        </>)}
-      </div>
-      <p className="regulation-note">Compliant with UK/EU Drivers' Hours (EC) No 561/2006</p>
+
+  return(<div className="login-wrap"><div className="login-card">
+    <div style={{marginBottom:20}}><Logo size={48}/></div>
+    <div className="login-title">HAULAGE HQ</div>
+    <div className="login-sub">Driving Hours Tracker</div>
+    <div style={{display:"flex",gap:4,marginBottom:24,background:"rgba(255,255,255,0.04)",borderRadius:8,padding:3}}>
+      {[["driver","🚛 Driver"],["admin","🔐 Admin"]].map(([k,l])=>(
+        <button key={k} onClick={()=>{setTab(k);setError("");}} style={{flex:1,padding:"9px 0",border:"none",borderRadius:6,cursor:"pointer",fontFamily:"var(--sans)",fontSize:13,fontWeight:600,transition:"all .2s",background:tab===k?"var(--amber)":"transparent",color:tab===k?"#0F0F0F":"#6B7280"}}>{l}</button>
+      ))}
     </div>
-  );
+    {tab==="driver"?(<>
+      <div className="input-group"><label className="input-label">DRIVER NAME</label><input className="input-field" value={name} onChange={e=>setName(e.target.value)} placeholder="As registered by admin" onKeyDown={e=>e.key==="Enter"&&driverLogin()}/></div>
+      <div className="input-group"><label className="input-label">PIN</label><input className="input-field" type="password" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,""))} placeholder="4+ digit PIN" maxLength={8} onKeyDown={e=>e.key==="Enter"&&driverLogin()}/></div>
+      {error&&<p className="error-msg">{error}</p>}
+      <button className="btn-primary" onClick={driverLogin} disabled={loading}>{loading?"Checking...":"SIGN IN"}</button>
+    </>):(<>
+      <div className="input-group"><label className="input-label">EMAIL</label><input className="input-field" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Admin email" onKeyDown={e=>e.key==="Enter"&&adminLogin()}/></div>
+      <div className="input-group"><label className="input-label">PASSWORD</label><input className="input-field" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Password" onKeyDown={e=>e.key==="Enter"&&adminLogin()}/></div>
+      {error&&<p className="error-msg">{error}</p>}
+      <button className="btn-primary" onClick={adminLogin}>ADMIN LOGIN</button>
+    </>)}
+  </div><p className="regulation-note">Compliant with UK/EU Drivers' Hours (EC) No 561/2006</p></div>);
 }
- 
+
 // ── GAUGE ────────────────────────────────────────────────
-function Gauge({label,value,max,percent,color}) {
-  return (<div className="gauge">
-    <div className="gauge-label">{label}</div>
-    <div className="gauge-value" style={{color}}>{value}</div>
-    <div className="gauge-track"><div className="gauge-fill" style={{width:`${percent}%`,background:color}}/></div>
-    <div className="gauge-max">of {max}</div>
-  </div>);
-}
- 
+function Gauge({label,value,max,percent,color}){return(<div className="gauge"><div className="gauge-label">{label}</div><div className="gauge-value" style={{color}}>{value}</div><div className="gauge-track"><div className="gauge-fill" style={{width:`${percent}%`,background:color}}/></div><div className="gauge-max">of {max}</div></div>);}
+
 // ── TIMER PAGE ───────────────────────────────────────────
-function TimerPage({user}) {
-  const [status, setStatus] = useState("stopped");
-  const [dSec, setDSec] = useState(0);
-  const [cSec, setCSec] = useState(0);
-  const [bSec, setBSec] = useState(0);
-  const [sessStart, setSessStart] = useState(null);
-  const [sessions, setSessions] = useState([]);
-  const [dailyT, setDailyT] = useState(0);
-  const [weeklyT, setWeeklyT] = useState(0);
-  const [warnings, setWarnings] = useState([]);
-  const [notifPerm, setNotifPerm] = useState("Notification" in window ? Notification.permission : "denied");
-  const iv = useRef(null);
- 
-  const askNotif = async () => { const ok = await requestNotifPermission(); setNotifPerm(ok ? "granted" : "denied"); };
- 
-  const loadTotals = () => {
-    const tk = today();
-    const ts = DB.get(`sess_${user.id}_${tk}`) || [];
-    setSessions(ts);
-    setDailyT(ts.reduce((s,x)=>s+(x.d||0),0));
-    const ws = weekStart(new Date()); let wt=0;
-    for(let i=0;i<7;i++){const dt=new Date(ws);dt.setDate(dt.getDate()+i);
-      const k=dt.toISOString().split("T")[0];
-      wt+=(DB.get(`sess_${user.id}_${k}`)||[]).reduce((s,x)=>s+(x.d||0),0);}
+function TimerPage({user}){
+  const[status,setStatus]=useState("stopped");
+  const[dSec,setDSec]=useState(0);const[cSec,setCSec]=useState(0);const[bSec,setBSec]=useState(0);
+  const[sessStart,setSessStart]=useState(null);const[sessions,setSessions]=useState([]);
+  const[dailyT,setDailyT]=useState(0);const[weeklyT,setWeeklyT]=useState(0);
+  const[warnings,setWarnings]=useState([]);const[pageLoading,setPageLoading]=useState(true);
+  const[notifPerm,setNotifPerm]=useState("Notification"in window?Notification.permission:"denied");
+  const iv=useRef(null);
+  const askNotif=async()=>{const ok=await requestNotifPermission();setNotifPerm(ok?"granted":"denied");};
+
+  const loadTotals=async()=>{
+    const tk=today(),ts=(await Cloud.get(`sess_${user.id}_${tk}`))||[];
+    setSessions(ts);setDailyT(ts.reduce((s,x)=>s+(x.d||0),0));
+    const ws=weekStart(new Date());let wt=0;
+    for(let i=0;i<7;i++){const dt=new Date(ws);dt.setDate(dt.getDate()+i);const k=dt.toISOString().split("T")[0];
+      wt+=((await Cloud.get(`sess_${user.id}_${k}`))||[]).reduce((s,x)=>s+(x.d||0),0);}
     setWeeklyT(wt);
   };
- 
-  useEffect(()=>{
-    const a=DB.get(`act_${user.id}`);
-    if(a&&a.st!=="stopped"){
-      const el=Math.floor((Date.now()-a.tick)/1000);
-      setStatus(a.st); setSessStart(a.ss);
+
+  useEffect(()=>{(async()=>{
+    const a=Local.get(`act_${user.id}`);
+    if(a&&a.st!=="stopped"){const el=Math.floor((Date.now()-a.tick)/1000);setStatus(a.st);setSessStart(a.ss);
       if(a.st==="driving"){setDSec(a.d+el);setCSec(a.c+el);}
-      else if(a.st==="break"){setBSec(a.b+el);setDSec(a.d);setCSec(a.c);}
-    }
-    loadTotals();
-  },[]);
- 
-  useEffect(()=>{
-    DB.set(`act_${user.id}`,{st:status,d:dSec,c:cSec,b:bSec,ss:sessStart,tick:Date.now()});
-  },[status,dSec,cSec,bSec]);
- 
-  useEffect(()=>{
-    clearInterval(iv.current);
-    if(status==="driving") iv.current=setInterval(()=>{setDSec(s=>s+1);setCSec(s=>s+1);},1000);
-    else if(status==="break") iv.current=setInterval(()=>{setBSec(s=>s+1);},1000);
-    return ()=>clearInterval(iv.current);
-  },[status]);
- 
+      else if(a.st==="break"){setBSec(a.b+el);setDSec(a.d);setCSec(a.c);}}
+    await loadTotals();setPageLoading(false);
+  })();},[]);
+
+  useEffect(()=>{Local.set(`act_${user.id}`,{st:status,d:dSec,c:cSec,b:bSec,ss:sessStart,tick:Date.now()});},[status,dSec,cSec,bSec]);
+
+  useEffect(()=>{clearInterval(iv.current);
+    if(status==="driving")iv.current=setInterval(()=>{setDSec(s=>s+1);setCSec(s=>s+1);},1000);
+    else if(status==="break")iv.current=setInterval(()=>{setBSec(s=>s+1);},1000);
+    return()=>clearInterval(iv.current);},[status]);
+
   useEffect(()=>{if(status==="break"&&bSec>=RULES.reqBreak)setCSec(0);},[bSec,status]);
- 
-  // Update browser tab title with current status
+
   useEffect(()=>{
-    if(status==="driving") document.title=`🟢 ${fmt(dSec)} driving — Haulage HQ`;
-    else if(status==="break") document.title=`🟡 ${fmt(bSec)} break — Haulage HQ`;
-    else document.title="Haulage HQ — Driving Hours Tracker";
+    if(status==="driving")document.title=`🟢 ${fmt(dSec)} — Haulage HQ`;
+    else if(status==="break")document.title=`🟡 ${fmt(bSec)} break — Haulage HQ`;
+    else document.title="Haulage HQ";
   },[status,dSec,bSec]);
- 
+
   useEffect(()=>{
-    const w=[], td=dailyT+(status==="driving"?dSec:0), tw=weeklyT+(status==="driving"?dSec:0);
- 
-    // Continuous driving alerts + notifications
-    if(cSec>=RULES.maxCont) {
-      w.push({l:"critical",m:"4.5h continuous reached — take 45-min break NOW"});
-      fireIfNew("cont_limit", "⛔ STOP — 4.5h Limit Reached", "You have been driving continuously for 4 hours 30 minutes. Take a 45-minute break immediately.");
-    } else if(cSec>=RULES.maxCont-1800) {
-      w.push({l:"warning",m:`${fmt(RULES.maxCont-cSec)} until mandatory break`});
-      fireIfNew("cont_30min", "⚠️ 30 Minutes Until Mandatory Break", `You have ${fmt(RULES.maxCont-cSec)} of continuous driving remaining.`);
-    } else { resetNotified("cont_"); }
- 
-    // Daily driving alerts + notifications
-    if(td>=RULES.maxDaily) {
-      w.push({l:"critical",m:"9-hour daily limit reached — STOP"});
-      fireIfNew("daily_limit", "⛔ STOP — 9h Daily Limit", "You have reached the maximum 9 hours of daily driving. Stop driving now.");
-    } else if(td>=RULES.maxDaily-3600) {
-      w.push({l:"warning",m:`${fmt(RULES.maxDaily-td)} daily remaining`});
-      fireIfNew("daily_1hr", "⚠️ 1 Hour of Daily Driving Left", `You have ${fmt(RULES.maxDaily-td)} of your 9-hour daily limit remaining.`);
-    } else { resetNotified("daily_"); }
- 
-    // Weekly driving alerts + notifications
-    if(tw>=RULES.maxWeekly) {
-      w.push({l:"critical",m:"56-hour weekly limit reached"});
-      fireIfNew("weekly_limit", "⛔ 56h Weekly Limit Reached", "You have reached the maximum 56 hours of weekly driving.");
-    } else if(tw>=RULES.maxWeekly-14400) {
-      w.push({l:"warning",m:`${fmt(RULES.maxWeekly-tw)} weekly remaining`});
-      fireIfNew("weekly_4hr", "⚠️ 4 Hours of Weekly Driving Left", `You have ${fmt(RULES.maxWeekly-tw)} of your 56-hour weekly limit remaining.`);
-    } else { resetNotified("weekly_"); }
- 
+    const w=[],td=dailyT+(status==="driving"?dSec:0),tw=weeklyT+(status==="driving"?dSec:0);
+    if(cSec>=RULES.maxCont){w.push({l:"critical",m:"4.5h continuous reached — take 45-min break NOW"});fireIfNew("cont_limit","⛔ STOP — 4.5h Limit","Take a 45-min break now.");}
+    else if(cSec>=RULES.maxCont-1800){w.push({l:"warning",m:`${fmt(RULES.maxCont-cSec)} until mandatory break`});fireIfNew("cont_30","⚠️ 30 Min Until Break",`${fmt(RULES.maxCont-cSec)} remaining.`);}
+    else{resetNotified("cont_");}
+    if(td>=RULES.maxDaily){w.push({l:"critical",m:"9-hour daily limit — STOP"});fireIfNew("daily_limit","⛔ 9h Daily Limit","Stop driving now.");}
+    else if(td>=RULES.maxDaily-3600){w.push({l:"warning",m:`${fmt(RULES.maxDaily-td)} daily remaining`});fireIfNew("daily_1h","⚠️ 1h Daily Left",`${fmt(RULES.maxDaily-td)} of 9h left.`);}
+    else{resetNotified("daily_");}
+    if(tw>=RULES.maxWeekly){w.push({l:"critical",m:"56h weekly limit reached"});fireIfNew("week_limit","⛔ 56h Weekly Limit","Weekly limit reached.");}
+    else if(tw>=RULES.maxWeekly-14400){w.push({l:"warning",m:`${fmt(RULES.maxWeekly-tw)} weekly remaining`});fireIfNew("week_4h","⚠️ 4h Weekly Left",`${fmt(RULES.maxWeekly-tw)} of 56h left.`);}
+    else{resetNotified("week_");}
     setWarnings(w);
   },[dSec,cSec,dailyT,weeklyT,status]);
- 
-  const go = () => { setStatus("driving"); setBSec(0); if(!sessStart)setSessStart(new Date().toISOString()); };
-  const pause = () => { setStatus("break"); setBSec(0); };
-  const stop = () => {
+
+  const go=()=>{setStatus("driving");setBSec(0);if(!sessStart)setSessStart(new Date().toISOString());};
+  const pause=()=>{setStatus("break");setBSec(0);};
+  const stop=async()=>{
     const s={id:Date.now(),s:sessStart||new Date().toISOString(),e:new Date().toISOString(),d:dSec,b:status==="break"?bSec:0};
-    const tk=today(), ex=DB.get(`sess_${user.id}_${tk}`)||[];
-    ex.push(s); DB.set(`sess_${user.id}_${tk}`,ex);
-    const days=DB.get(`days_${user.id}`)||[];
-    if(!days.includes(tk)){days.push(tk);DB.set(`days_${user.id}`,days);}
+    const tk=today(),ex=(await Cloud.get(`sess_${user.id}_${tk}`))||[];
+    ex.push(s);await Cloud.set(`sess_${user.id}_${tk}`,ex);
+    const days=(await Cloud.get(`days_${user.id}`))||[];
+    if(!days.includes(tk)){days.push(tk);await Cloud.set(`days_${user.id}`,days);}
     setStatus("stopped");setDSec(0);setCSec(0);setBSec(0);setSessStart(null);
-    DB.del(`act_${user.id}`); notifiedRef.current.clear(); loadTotals();
+    Local.del(`act_${user.id}`);notifiedRef.current.clear();await loadTotals();
   };
- 
-  const td=dailyT+(status==="driving"?dSec:0), tw=weeklyT+(status==="driving"?dSec:0);
- 
-  return (<div>
-    {notifPerm!=="granted"&&notifPerm!=="denied"&&(
-      <div className="alert warning" style={{cursor:"pointer"}} onClick={askNotif}>
-        <span style={{fontSize:18}}>🔔</span>
-        <span><strong>Enable notifications</strong> — get alerted when approaching driving limits, even if this tab is in the background. <u>Tap here to enable.</u></span>
-      </div>
-    )}
-    {notifPerm==="denied"&&(
-      <div className="alert warning" style={{opacity:.6}}>
-        <span style={{fontSize:18}}>🔕</span>
-        <span>Notifications are blocked. To enable, update your browser's site permissions for this page.</span>
-      </div>
-    )}
+
+  if(pageLoading)return<div style={{textAlign:"center",padding:40}}><div className="spinner" style={{margin:"0 auto 12px"}}/><p className="loading-text">Loading dashboard...</p></div>;
+  const td=dailyT+(status==="driving"?dSec:0),tw=weeklyT+(status==="driving"?dSec:0);
+
+  return(<div>
+    {notifPerm!=="granted"&&notifPerm!=="denied"&&<div className="alert warning" style={{cursor:"pointer"}} onClick={askNotif}><span style={{fontSize:18}}>🔔</span><span><strong>Enable notifications</strong> — get alerted at driving limits. <u>Tap here.</u></span></div>}
+    {notifPerm==="denied"&&<div className="alert warning" style={{opacity:.6}}><span style={{fontSize:18}}>🔕</span><span>Notifications blocked. Update browser permissions.</span></div>}
     {warnings.map((w,i)=>(<div key={i} className={`alert ${w.l}`}><span style={{fontSize:18}}>{w.l==="critical"?"⛔":"⚠️"}</span><span>{w.m}</span></div>))}
     <div className="timer-card">
-      <div className="timer-status">
-        <span className={`status-dot ${status==="driving"?"driving":status==="break"?"on-break":"stopped"}`}/>
-        <span className="status-label">{status==="driving"?"DRIVING":status==="break"?"ON BREAK":"STOPPED"}</span>
-      </div>
+      <div className="timer-status"><span className={`status-dot ${status==="driving"?"driving":status==="break"?"on-break":"stopped"}`}/><span className="status-label">{status==="driving"?"DRIVING":status==="break"?"ON BREAK":"STOPPED"}</span></div>
       <div className="timer-display">{status==="break"?fmt(bSec):fmt(dSec)}</div>
       <div className="timer-sublabel">{status==="break"?"Break Duration":"Session Driving"}</div>
       <div className="timer-actions">
@@ -495,139 +344,99 @@ function TimerPage({user}) {
       <Gauge label="Today" value={fmt(td)} max="9h 00m" percent={Math.min(td/RULES.maxDaily*100,100)} color={td/RULES.maxDaily>.85?"var(--red)":"var(--green)"}/>
       <Gauge label="This Week" value={fmt(tw)} max="56h 00m" percent={Math.min(tw/RULES.maxWeekly*100,100)} color={tw/RULES.maxWeekly>.85?"var(--red)":"var(--blue)"}/>
     </div>
-    {sessions.length>0&&(<div className="card"><div className="card-title">Today's Sessions</div>
-      {sessions.map((s,i)=>(<div key={i} className="session-row">
-        <span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span>
-        <span className="session-dur">{fmt(s.d)}</span>
-      </div>))}
-    </div>)}
+    {sessions.length>0&&<div className="card"><div className="card-title">Today's Sessions</div>{sessions.map((s,i)=>(<div key={i} className="session-row"><span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span><span className="session-dur">{fmt(s.d)}</span></div>))}</div>}
   </div>);
 }
- 
-// ── HISTORY PAGE ─────────────────────────────────────────
-function HistoryPage({user}) {
-  const [days,setDays]=useState([]); const [sel,setSel]=useState(null); const [sess,setSess]=useState([]);
-  useEffect(()=>{
-    const dl=(DB.get(`days_${user.id}`)||[]).sort((a,b)=>b.localeCompare(a));
-    setDays(dl.map(d=>{const ss=DB.get(`sess_${user.id}_${d}`)||[];
-      return {date:d,n:ss.length,t:ss.reduce((s,x)=>s+(x.d||0),0)};}));
-  },[]);
-  const pick = d => { setSel(d); setSess(DB.get(`sess_${user.id}_${d}`)||[]); };
-  return (<div>
+
+// ── HISTORY ──────────────────────────────────────────────
+function HistoryPage({user}){
+  const[days,setDays]=useState([]);const[sel,setSel]=useState(null);const[sess,setSess]=useState([]);const[loading,setLoading]=useState(true);
+  useEffect(()=>{(async()=>{
+    const dl=((await Cloud.get(`days_${user.id}`))||[]).sort((a,b)=>b.localeCompare(a));
+    const sums=[];for(const d of dl.slice(0,60)){const ss=(await Cloud.get(`sess_${user.id}_${d}`))||[];sums.push({date:d,n:ss.length,t:ss.reduce((s,x)=>s+(x.d||0),0)});}
+    setDays(sums);setLoading(false);
+  })();},[]);
+  const pick=async d=>{setSel(d);setSess((await Cloud.get(`sess_${user.id}_${d}`))||[]);};
+  if(loading)return<div style={{textAlign:"center",padding:40}}><div className="spinner" style={{margin:"0 auto 12px"}}/><p className="loading-text">Loading history...</p></div>;
+  return(<div>
     <div className="card"><div className="card-title">Driving History</div>
       {days.length===0?<p style={{color:"var(--text-muted)",textAlign:"center",padding:20}}>No records yet.</p>
-      :days.map((d,i)=>(<div key={i} className={`history-row ${sel===d.date?"selected":""}`} onClick={()=>pick(d.date)}>
-        <div><span className="history-date">{fmtDate(d.date)}</span><span className="history-meta">{d.n} session{d.n!==1?"s":""}</span></div>
-        <span className="history-total">{fmt(d.t)}</span>
-      </div>))}
+      :days.map((d,i)=>(<div key={i} className={`history-row ${sel===d.date?"selected":""}`} onClick={()=>pick(d.date)}><div><span className="history-date">{fmtDate(d.date)}</span><span className="history-meta">{d.n} session{d.n!==1?"s":""}</span></div><span className="history-total">{fmt(d.t)}</span></div>))}
     </div>
-    {sel&&sess.length>0&&(<div className="card"><div className="card-title">Sessions — {fmtDate(sel)}</div>
-      {sess.map((s,i)=>(<div key={i} className="session-row"><div>
-        <span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span>
-        {s.b>0&&<span className="break-badge">Break: {fmt(s.b)}</span>}
-      </div><span className="session-dur">{fmt(s.d)}</span></div>))}
-    </div>)}
+    {sel&&sess.length>0&&<div className="card"><div className="card-title">Sessions — {fmtDate(sel)}</div>{sess.map((s,i)=>(<div key={i} className="session-row"><div><span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span>{s.b>0&&<span className="break-badge">Break: {fmt(s.b)}</span>}</div><span className="session-dur">{fmt(s.d)}</span></div>))}</div>}
   </div>);
 }
- 
-// ── EXPORT PAGE ──────────────────────────────────────────
-function ExportPage({user}) {
-  const [range,setRange]=useState("week"); const [result,setResult]=useState(null);
-  const doExport = () => {
-    const dl=(DB.get(`days_${user.id}`)||[]).sort();
-    const now=new Date();
+
+// ── EXPORT ───────────────────────────────────────────────
+function ExportPage({user}){
+  const[range,setRange]=useState("week");const[result,setResult]=useState(null);const[busy,setBusy]=useState(false);
+  const doExport=async()=>{setBusy(true);
+    const dl=((await Cloud.get(`days_${user.id}`))||[]).sort();const now=new Date();
     const start=range==="week"?weekStart(now):range==="month"?new Date(now.getFullYear(),now.getMonth(),1):new Date(0);
-    const rows=[["Date","Start","End","Driving","Break"]]; let tot=0;
-    dl.forEach(d=>{if(new Date(d)<start)return;
-      (DB.get(`sess_${user.id}_${d}`)||[]).forEach(s=>{
-        rows.push([d,new Date(s.s).toLocaleTimeString("en-GB"),new Date(s.e).toLocaleTimeString("en-GB"),fmt(s.d),fmt(s.b||0)]);
-        tot+=s.d||0;});});
+    const rows=[["Date","Start","End","Driving","Break"]];let tot=0;
+    for(const d of dl){if(new Date(d)<start)continue;const ss=(await Cloud.get(`sess_${user.id}_${d}`))||[];
+      ss.forEach(s=>{rows.push([d,new Date(s.s).toLocaleTimeString("en-GB"),new Date(s.e).toLocaleTimeString("en-GB"),fmt(s.d),fmt(s.b||0)]);tot+=s.d||0;});}
     rows.push([],["TOTAL","","",fmt(tot),""],["Driver",user.name],["Exported",new Date().toLocaleString("en-GB")]);
-    const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
-    const blob=new Blob([csv],{type:"text/csv"}); const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob); a.download=`driving-${user.name.replace(/\s+/g,"-")}-${range}-${today()}.csv`;
-    a.click(); URL.revokeObjectURL(a.href);
-    setResult({n:rows.length-4,t:tot});
+    const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`driving-${user.name.replace(/\s+/g,"-")}-${range}-${today()}.csv`;a.click();
+    setResult({n:rows.length-4,t:tot});setBusy(false);
   };
-  return (<div>
-    <div className="card"><div className="card-title">Export Data</div>
-      <p style={{color:"var(--text-dim)",marginBottom:20,fontSize:14}}>Download driving records as CSV.</p>
-      <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
-        {[["week","This Week"],["month","This Month"],["all","All Time"]].map(([v,l])=>(<button key={v} className={`range-btn ${range===v?"active":""}`} onClick={()=>setRange(v)}>{l}</button>))}
-      </div>
-      <button className="btn-primary" onClick={doExport}>⬇ DOWNLOAD CSV</button>
+  return(<div>
+    <div className="card"><div className="card-title">Export Data</div><p style={{color:"var(--text-dim)",marginBottom:20,fontSize:14}}>Download driving records as CSV.</p>
+      <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>{[["week","This Week"],["month","This Month"],["all","All Time"]].map(([v,l])=>(<button key={v} className={`range-btn ${range===v?"active":""}`} onClick={()=>setRange(v)}>{l}</button>))}</div>
+      <button className="btn-primary" onClick={doExport} disabled={busy}>{busy?"Exporting...":"⬇ DOWNLOAD CSV"}</button>
       {result&&<div className="alert success" style={{marginTop:16}}><span>✅</span><span>Exported {result.n} records. Total: {fmt(result.t)}</span></div>}
     </div>
-    <div className="card"><div className="card-title">UK/EU Limits</div>
-      <div className="rules-grid">
-        {[["Continuous","4h 30m"],["Break","45 min"],["Daily","9h (10h x2/wk)"],["Weekly","56h"],["Fortnightly","90h"],["Rest","11h min"]].map(([r,v],i)=>(<div key={i} className="rule-item"><small>{r}</small><strong>{v}</strong></div>))}
-      </div>
-    </div>
+    <div className="card"><div className="card-title">UK/EU Limits</div><div className="rules-grid">{[["Continuous","4h 30m"],["Break","45 min"],["Daily","9h (10h x2/wk)"],["Weekly","56h"],["Fortnightly","90h"],["Rest","11h min"]].map(([r,v],i)=>(<div key={i} className="rule-item"><small>{r}</small><strong>{v}</strong></div>))}</div></div>
   </div>);
 }
- 
-// ── RULES PAGE ───────────────────────────────────────────
-function RulesPage() {
-  return (<div className="card"><div className="card-title">EU Regulation (EC) No 561/2006</div>
-    <p style={{color:"#D1D5DB",fontSize:14,marginBottom:16,lineHeight:1.7}}>Applies to vehicles over 3.5t (goods) or 9+ passengers.</p>
-    {[["Driving Periods","Max 4h 30m continuous, then 45-min break (can split: 15+30 min)."],
-      ["Daily Limits","Max 9h daily (extendable to 10h, twice per week)."],
-      ["Weekly & Fortnightly","Max 56h/week. Max 90h across two consecutive weeks."],
-      ["Rest Periods","Min 11h daily rest (reducible to 9h up to 3 times). Weekly rest: 45h minimum."]
-    ].map(([t,d],i)=>(<div key={i} className="rule-block"><h4>{t}</h4><p>{d}</p></div>))}
-    <div className="rule-disclaimer">⚠️ Tracking aid only — does not replace an approved tachograph.</div>
-  </div>);
-}
- 
-// ── ADMIN PAGE ───────────────────────────────────────────
-function AdminPage() {
-  const [drivers,setDrivers]=useState({}); const [nn,setNN]=useState(""); const [np,setNP]=useState(""); const [msg,setMsg]=useState(null);
-  useEffect(()=>{setDrivers(DB.get("drivers")||{});},[]);
-  const save=d=>{DB.set("drivers",d);setDrivers({...d});};
- 
-  const add=()=>{
-    if(!nn.trim())return setMsg({t:"warning",m:"Enter a name"});
-    if(!np||np.length<4)return setMsg({t:"warning",m:"PIN must be 4+ digits"});
-    const k=nn.trim().toLowerCase();
-    if(drivers[k])return setMsg({t:"warning",m:"Already exists"});
-    save({...drivers,[k]:{name:nn.trim(),pin:np,created:new Date().toISOString(),disabled:false}});
-    setNN("");setNP(""); setMsg({t:"success",m:`${nn.trim()} added`}); setTimeout(()=>setMsg(null),3000);
-  };
-  const toggle=k=>{const u={...drivers};u[k].disabled=!u[k].disabled;save(u);};
-  const del=k=>{if(!confirm(`Delete ${drivers[k].name}?`))return;const u={...drivers};delete u[k];save(u);};
-  const resetPin=k=>{
-    const p=prompt(`New PIN for ${drivers[k].name}:`);
-    if(!p||p.length<4||!/^\d+$/.test(p))return alert("Invalid PIN");
-    const u={...drivers};u[k].pin=p;save(u);
-    setMsg({t:"success",m:`PIN reset for ${u[k].name}`});setTimeout(()=>setMsg(null),3000);
-  };
- 
+
+// ── RULES ────────────────────────────────────────────────
+function RulesPage(){return(<div className="card"><div className="card-title">EU Regulation (EC) No 561/2006</div><p style={{color:"#D1D5DB",fontSize:14,marginBottom:16,lineHeight:1.7}}>Applies to vehicles over 3.5t or 9+ passengers.</p>{[["Driving Periods","Max 4h 30m continuous, then 45-min break (can split: 15+30)."],["Daily Limits","Max 9h daily (extendable to 10h, twice per week)."],["Weekly & Fortnightly","Max 56h/week. Max 90h across two consecutive weeks."],["Rest Periods","Min 11h daily rest (reducible to 9h up to 3 times). Weekly rest: 45h."]].map(([t,d],i)=>(<div key={i} className="rule-block"><h4>{t}</h4><p>{d}</p></div>))}<div className="rule-disclaimer">⚠️ Tracking aid only — does not replace an approved tachograph.</div></div>);}
+
+// ── ADMIN ────────────────────────────────────────────────
+function AdminPage(){
+  const[drivers,setDrivers]=useState({});const[nn,setNN]=useState("");const[np,setNP]=useState("");
+  const[msg,setMsg]=useState(null);const[loading,setLoading]=useState(true);const[stats,setStats]=useState({sess:0,hrs:0});
+  const load=async()=>{const d=(await Cloud.get("drivers"))||{};setDrivers(d);setLoading(false);return d;};
+  useEffect(()=>{load();},[]);
+
+  useEffect(()=>{(async()=>{let ts=0,td=0;for(const k of Object.keys(drivers)){const days=(await Cloud.get(`days_${k}`))||[];
+    for(const d of days){const ss=(await Cloud.get(`sess_${k}_${d}`))||[];ts+=ss.length;td+=ss.reduce((s,x)=>s+(x.d||0),0);}}
+    setStats({sess:ts,hrs:Math.round(td/3600)});})();},[drivers]);
+
+  const save=async d=>{await Cloud.set("drivers",d);setDrivers({...d});};
+  const add=async()=>{if(!nn.trim())return setMsg({t:"warning",m:"Enter a name"});if(!np||np.length<4)return setMsg({t:"warning",m:"PIN must be 4+ digits"});
+    const k=nn.trim().toLowerCase();if(drivers[k])return setMsg({t:"warning",m:"Already exists"});
+    await save({...drivers,[k]:{name:nn.trim(),pin:np,created:new Date().toISOString(),disabled:false}});
+    setNN("");setNP("");setMsg({t:"success",m:`${nn.trim()} added`});setTimeout(()=>setMsg(null),3000);};
+  const toggle=async k=>{const u={...drivers};u[k].disabled=!u[k].disabled;await save(u);};
+  const del=async k=>{if(!confirm(`Delete ${drivers[k].name}?`))return;const u={...drivers};delete u[k];await save(u);};
+  const resetPin=async k=>{const p=prompt(`New PIN for ${drivers[k].name}:`);if(!p||p.length<4||!/^\d+$/.test(p))return alert("Invalid PIN");
+    const u={...drivers};u[k].pin=p;await save(u);setMsg({t:"success",m:`PIN reset for ${u[k].name}`});setTimeout(()=>setMsg(null),3000);};
+
+  if(loading)return<div style={{textAlign:"center",padding:40}}><div className="spinner" style={{margin:"0 auto 12px"}}/><p className="loading-text">Loading...</p></div>;
   const dk=Object.keys(drivers);
-  let totalSess=0,totalD=0;
-  dk.forEach(k=>{(DB.get(`days_${k}`)||[]).forEach(d=>{
-    const ss=DB.get(`sess_${k}_${d}`)||[];totalSess+=ss.length;totalD+=ss.reduce((s,x)=>s+(x.d||0),0);});});
- 
-  return (<div>
+
+  return(<div>
     <div className="stats-grid">
       <div className="stat-card"><div className="stat-value">{dk.length}</div><div className="stat-label">Drivers</div></div>
       <div className="stat-card"><div className="stat-value">{dk.filter(k=>!drivers[k].disabled).length}</div><div className="stat-label">Active</div></div>
-      <div className="stat-card"><div className="stat-value">{totalSess}</div><div className="stat-label">Sessions</div></div>
-      <div className="stat-card"><div className="stat-value">{Math.round(totalD/3600)}h</div><div className="stat-label">Total Hours</div></div>
+      <div className="stat-card"><div className="stat-value">{stats.sess}</div><div className="stat-label">Sessions</div></div>
+      <div className="stat-card"><div className="stat-value">{stats.hrs}h</div><div className="stat-label">Total Hours</div></div>
     </div>
     {msg&&<div className={`alert ${msg.t}`} style={{marginBottom:16}}><span>{msg.t==="success"?"✅":"⚠️"}</span><span>{msg.m}</span></div>}
     <div className="card"><div className="card-title">Manage Drivers</div>
       {dk.length===0?<p style={{color:"var(--text-muted)",textAlign:"center",padding:16}}>No drivers yet.</p>
       :<div style={{overflowX:"auto"}}><table className="admin-table"><thead><tr><th>Driver</th><th>Status</th><th>Created</th><th style={{textAlign:"right"}}>Actions</th></tr></thead><tbody>
-        {dk.map(k=>{const d=drivers[k];return(<tr key={k}>
-          <td>{d.name}</td>
+        {dk.map(k=>{const d=drivers[k];return(<tr key={k}><td>{d.name}</td>
           <td><span style={{fontSize:11,fontWeight:700,padding:"3px 8px",borderRadius:4,background:d.disabled?"rgba(220,38,38,0.1)":"rgba(34,197,94,0.1)",color:d.disabled?"#FCA5A5":"#86EFAC"}}>{d.disabled?"DISABLED":"ACTIVE"}</span></td>
           <td>{d.created?fmtDate(d.created):"—"}</td>
           <td style={{textAlign:"right"}}><div style={{display:"flex",gap:6,justifyContent:"flex-end",flexWrap:"wrap"}}>
             <button className="btn-small" onClick={()=>resetPin(k)}>Reset PIN</button>
             <button className="btn-small" onClick={()=>toggle(k)}>{d.disabled?"Enable":"Disable"}</button>
             <button className="btn-small danger" onClick={()=>del(k)}>Delete</button>
-          </div></td>
-        </tr>);})}
+          </div></td></tr>);})}
       </tbody></table></div>}
       <div className="admin-add-form">
         <input className="input-field" placeholder="Driver name" value={nn} onChange={e=>setNN(e.target.value)}/>
@@ -636,81 +445,52 @@ function AdminPage() {
       </div>
     </div>
     <div className="card"><div className="card-title">Export All</div>
-      <button className="btn-primary" onClick={()=>{
-        const rows=[["Driver","Date","Start","End","Driving","Break"]];
-        dk.forEach(k=>{const d=drivers[k];(DB.get(`days_${k}`)||[]).sort().forEach(day=>{
-          (DB.get(`sess_${k}_${day}`)||[]).forEach(s=>{
-            rows.push([d.name,day,new Date(s.s).toLocaleTimeString("en-GB"),new Date(s.e).toLocaleTimeString("en-GB"),fmt(s.d),fmt(s.b||0)]);});});});
-        const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");
-        const blob=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");
-        a.href=URL.createObjectURL(blob);a.download=`all-drivers-${today()}.csv`;a.click();
+      <button className="btn-primary" onClick={async()=>{const rows=[["Driver","Date","Start","End","Driving","Break"]];
+        for(const k of dk){const d=drivers[k];for(const day of((await Cloud.get(`days_${k}`))||[]).sort()){
+          ((await Cloud.get(`sess_${k}_${day}`))||[]).forEach(s=>{rows.push([d.name,day,new Date(s.s).toLocaleTimeString("en-GB"),new Date(s.e).toLocaleTimeString("en-GB"),fmt(s.d),fmt(s.b||0)]);});}}
+        const csv=rows.map(r=>r.map(c=>`"${c}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv"});
+        const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`all-drivers-${today()}.csv`;a.click();
       }}>⬇ DOWNLOAD ALL RECORDS</button>
     </div>
   </div>);
 }
- 
+
 // ── ADMIN: DRIVER VIEW ───────────────────────────────────
-function AdminDriverView() {
-  const [drivers,setDrivers]=useState({}); const [sel,setSel]=useState(null);
-  const [days,setDays]=useState([]); const [sess,setSess]=useState([]); const [selDay,setSelDay]=useState(null);
-  useEffect(()=>{setDrivers(DB.get("drivers")||{});},[]);
-  const pick=k=>{setSel(k);setSelDay(null);setSess([]);
-    const dl=(DB.get(`days_${k}`)||[]).sort((a,b)=>b.localeCompare(a));
-    setDays(dl.map(d=>{const ss=DB.get(`sess_${k}_${d}`)||[];return{date:d,n:ss.length,t:ss.reduce((s,x)=>s+(x.d||0),0)};}));};
-  const pickDay=d=>{setSelDay(d);setSess(DB.get(`sess_${sel}_${d}`)||[]);};
+function AdminDriverView(){
+  const[drivers,setDrivers]=useState({});const[sel,setSel]=useState(null);
+  const[days,setDays]=useState([]);const[sess,setSess]=useState([]);const[selDay,setSelDay]=useState(null);const[loading,setLoading]=useState(true);
+  useEffect(()=>{(async()=>{setDrivers((await Cloud.get("drivers"))||{});setLoading(false);})();},[]);
+  const pick=async k=>{setSel(k);setSelDay(null);setSess([]);
+    const dl=((await Cloud.get(`days_${k}`))||[]).sort((a,b)=>b.localeCompare(a));const sums=[];
+    for(const d of dl){const ss=(await Cloud.get(`sess_${k}_${d}`))||[];sums.push({date:d,n:ss.length,t:ss.reduce((s,x)=>s+(x.d||0),0)});}setDays(sums);};
+  const pickDay=async d=>{setSelDay(d);setSess((await Cloud.get(`sess_${sel}_${d}`))||[]);};
+  if(loading)return<div style={{textAlign:"center",padding:40}}><div className="spinner" style={{margin:"0 auto 12px"}}/></div>;
   const dk=Object.keys(drivers);
-  return (<div>
-    <div className="card"><div className="card-title">Driver Records</div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-        {dk.map(k=>(<button key={k} className={`range-btn ${sel===k?"active":""}`} onClick={()=>pick(k)}>{drivers[k].name}</button>))}
-      </div>
-      {dk.length===0&&<p style={{color:"var(--text-muted)",textAlign:"center",padding:16}}>No drivers.</p>}
-    </div>
+  return(<div>
+    <div className="card"><div className="card-title">Driver Records</div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{dk.map(k=>(<button key={k} className={`range-btn ${sel===k?"active":""}`} onClick={()=>pick(k)}>{drivers[k].name}</button>))}</div>
+      {dk.length===0&&<p style={{color:"var(--text-muted)",textAlign:"center",padding:16}}>No drivers.</p>}</div>
     {sel&&<div className="card"><div className="card-title">{drivers[sel]?.name} — History</div>
       {days.length===0?<p style={{color:"var(--text-muted)",padding:12}}>No records.</p>
-      :days.map((d,i)=>(<div key={i} className={`history-row ${selDay===d.date?"selected":""}`} onClick={()=>pickDay(d.date)}>
-        <div><span className="history-date">{fmtDate(d.date)}</span><span className="history-meta">{d.n} session{d.n!==1?"s":""}</span></div>
-        <span className="history-total">{fmt(d.t)}</span>
-      </div>))}
-    </div>}
-    {selDay&&sess.length>0&&<div className="card"><div className="card-title">Sessions — {fmtDate(selDay)}</div>
-      {sess.map((s,i)=>(<div key={i} className="session-row"><div>
-        <span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span>
-        {s.b>0&&<span className="break-badge">Break: {fmt(s.b)}</span>}
-      </div><span className="session-dur">{fmt(s.d)}</span></div>))}
-    </div>}
+      :days.map((d,i)=>(<div key={i} className={`history-row ${selDay===d.date?"selected":""}`} onClick={()=>pickDay(d.date)}><div><span className="history-date">{fmtDate(d.date)}</span><span className="history-meta">{d.n} session{d.n!==1?"s":""}</span></div><span className="history-total">{fmt(d.t)}</span></div>))}</div>}
+    {selDay&&sess.length>0&&<div className="card"><div className="card-title">Sessions — {fmtDate(selDay)}</div>{sess.map((s,i)=>(<div key={i} className="session-row"><div><span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span>{s.b>0&&<span className="break-badge">Break: {fmt(s.b)}</span>}</div><span className="session-dur">{fmt(s.d)}</span></div>))}</div>}
   </div>);
 }
- 
+
 // ── MAIN APP ─────────────────────────────────────────────
-function App() {
-  const [user,setUser]=useState(null); const [page,setPage]=useState("dashboard"); const [ready,setReady]=useState(false);
-  useEffect(()=>{const l=DB.get("lastUser");if(l)setUser(l);setReady(true);},[]);
-  const login=u=>{setUser(u);DB.set("lastUser",u);setPage(u.role==="admin"?"admin":"dashboard");};
-  const logout=()=>{setUser(null);DB.del("lastUser");setPage("dashboard");};
- 
-  if(!ready) return <div className="loading-screen"><div className="spinner"/></div>;
-  if(!user) return <LoginPage onLogin={login}/>;
- 
+function App(){
+  const[user,setUser]=useState(null);const[page,setPage]=useState("dashboard");const[ready,setReady]=useState(false);
+  useEffect(()=>{const l=Local.get("lastUser");if(l)setUser(l);setReady(true);},[]);
+  const login=u=>{setUser(u);Local.set("lastUser",u);setPage(u.role==="admin"?"admin":"dashboard");};
+  const logout=()=>{setUser(null);Local.del("lastUser");setPage("dashboard");};
+  if(!ready)return<div className="loading-screen"><div className="spinner"/></div>;
+  if(!user)return<LoginPage onLogin={login}/>;
   const isAdmin=user.role==="admin";
-  const nav=isAdmin
-    ?[{id:"admin",icon:"⚙️",label:"Drivers"},{id:"records",icon:"📋",label:"Records"},{id:"rules",icon:"📖",label:"Rules"}]
+  const nav=isAdmin?[{id:"admin",icon:"⚙️",label:"Drivers"},{id:"records",icon:"📋",label:"Records"},{id:"rules",icon:"📖",label:"Rules"}]
     :[{id:"dashboard",icon:"⏱",label:"Dashboard"},{id:"history",icon:"📋",label:"History"},{id:"export",icon:"⬇",label:"Export"},{id:"rules",icon:"📖",label:"Rules"}];
- 
-  return (<div>
-    <header className="app-header">
-      <div className="header-left"><Logo/><span className="header-brand">HAULAGE HQ</span></div>
-      <div className="header-right">
-        {isAdmin&&<span className="admin-badge">ADMIN</span>}
-        <span className="driver-badge">{user.name}</span>
-        <button className="btn-signout" onClick={logout}>Sign Out</button>
-      </div>
-    </header>
-    <nav className="app-nav">
-      {nav.map(n=>(<button key={n.id} className={`nav-btn ${page===n.id?"active":""}`} onClick={()=>setPage(n.id)}>
-        <span>{n.icon}</span><span>{n.label}</span>
-      </button>))}
-    </nav>
+  return(<div>
+    <header className="app-header"><div className="header-left"><Logo/><span className="header-brand">HAULAGE HQ</span></div>
+      <div className="header-right">{isAdmin&&<span className="admin-badge">ADMIN</span>}<span className="driver-badge">{user.name}</span><button className="btn-signout" onClick={logout}>Sign Out</button></div></header>
+    <nav className="app-nav">{nav.map(n=>(<button key={n.id} className={`nav-btn ${page===n.id?"active":""}`} onClick={()=>setPage(n.id)}><span>{n.icon}</span><span>{n.label}</span></button>))}</nav>
     <main className="app-main">
       {page==="dashboard"&&!isAdmin&&<TimerPage user={user}/>}
       {page==="history"&&!isAdmin&&<HistoryPage user={user}/>}
@@ -722,7 +502,6 @@ function App() {
     <footer className="app-footer">Tracking aid only — does not replace an approved tachograph</footer>
   </div>);
 }
- 
 ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
 </script>
 </body>
