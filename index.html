@@ -174,6 +174,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
 
+// Enable offline persistence — queues writes when offline, syncs when back online
+firestore.enablePersistence({ synchronizeTabs: true }).catch(err => {
+  if (err.code === 'failed-precondition') console.log('Offline persistence limited to one tab');
+  else if (err.code === 'unimplemented') console.log('Browser does not support offline persistence');
+});
+
 const ADMIN = { email: "jama.mohammed@ymail.com", password: "Hamzah2033?" };
 const RULES = { maxCont:4.5*3600, reqBreak:45*60, maxDaily:9*3600, maxExtDaily:10*3600, maxWeekly:56*3600, maxFortnight:90*3600, minRest:11*3600 };
 
@@ -202,9 +208,14 @@ const Logo=({size=28})=>(<svg width={size} height={size} viewBox="0 0 48 48" fil
 
 // ── NOTIFICATIONS ────────────────────────────────────────
 const notify=(title,body,tag)=>{if(!("Notification"in window)||Notification.permission!=="granted")return;try{new Notification(title,{body,tag,requireInteraction:true});}catch{}};
+// Vibration patterns: warning = double pulse, critical = urgent triple buzz
+const vibrate=(level)=>{if(!("vibrate"in navigator))return;try{
+  if(level==="critical")navigator.vibrate([300,100,300,100,500]);
+  else navigator.vibrate([200,100,200]);
+}catch{}};
 const requestNotifPermission=async()=>{if(!("Notification"in window))return false;if(Notification.permission==="granted")return true;if(Notification.permission==="denied")return false;return(await Notification.requestPermission())==="granted";};
 const notifiedRef={current:new Set()};
-const fireIfNew=(k,t,b)=>{if(!notifiedRef.current.has(k)){notifiedRef.current.add(k);notify(t,b,k);}};
+const fireIfNew=(k,t,b,level)=>{if(!notifiedRef.current.has(k)){notifiedRef.current.add(k);notify(t,b,k);vibrate(level||"warning");}};
 const resetNotified=p=>{for(const k of notifiedRef.current){if(k.startsWith(p))notifiedRef.current.delete(k);}};
 
 // ── LOGIN ────────────────────────────────────────────────
@@ -262,13 +273,161 @@ function Gauge({label,value,max,percent,color}){return(<div className="gauge"><d
 // ── TIMER PAGE ───────────────────────────────────────────
 function TimerPage({user}){
   const[status,setStatus]=useState("stopped");
+  // Timestamps (ms) for when current phase started
+  const[driveStartAt,setDriveStartAt]=useState(null);
+  const[contStartAt,setContStartAt]=useState(null);
+  const[breakStartAt,setBreakStartAt]=useState(null);
+  // Accumulated seconds from previous phases within this session
+  const[accumDrive,setAccumDrive]=useState(0);
+  const[accumCont,setAccumCont]=useState(0);
+  // Display values (recalculated every tick from real timestamps)
   const[dSec,setDSec]=useState(0);const[cSec,setCSec]=useState(0);const[bSec,setBSec]=useState(0);
   const[sessStart,setSessStart]=useState(null);const[sessions,setSessions]=useState([]);
   const[dailyT,setDailyT]=useState(0);const[weeklyT,setWeeklyT]=useState(0);
   const[warnings,setWarnings]=useState([]);const[pageLoading,setPageLoading]=useState(true);
   const[notifPerm,setNotifPerm]=useState("Notification"in window?Notification.permission:"denied");
   const iv=useRef(null);
+  const gpsRef=useRef({lastPos:null,stationarySince:null,currentPauseId:null});
+  const[detectedPauses,setDetectedPauses]=useState([]);
   const askNotif=async()=>{const ok=await requestNotifPermission();setNotifPerm(ok?"granted":"denied");};
+
+  // Haversine distance in metres
+  const geoDistance=(lat1,lon1,lat2,lon2)=>{
+    const R=6371000,toRad=d=>d*Math.PI/180;
+    const dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+    const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  };
+
+  // Load detected pauses from Cloud on mount
+  const loadPauses=async()=>{
+    const p=(await Cloud.get(`pauses_${user.id}_${today()}`))||[];
+    setDetectedPauses(p);
+  };
+
+  // GPS monitoring — logs pauses when stationary 5+ min while driving
+  useEffect(()=>{
+    const g=gpsRef.current;
+    if(status==="driving"&&"geolocation"in navigator){
+      const checkPos=()=>{
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const{latitude:lat,longitude:lng}=pos.coords;
+          const now=Date.now();
+          if(g.lastPos){
+            const dist=geoDistance(g.lastPos.lat,g.lastPos.lng,lat,lng);
+            if(dist<50){
+              // Stationary
+              if(!g.stationarySince) g.stationarySince=now;
+              const mins=Math.floor((now-g.stationarySince)/60000);
+              if(mins>=5&&!g.currentPauseId){
+                // Start a detected pause — log it
+                const pauseId="p_"+g.stationarySince;
+                g.currentPauseId=pauseId;
+                setDetectedPauses(prev=>{
+                  const updated=[...prev,{id:pauseId,start:new Date(g.stationarySince).toISOString(),end:null,mins:mins,converted:false}];
+                  Cloud.set(`pauses_${user.id}_${today()}`,updated);
+                  return updated;
+                });
+                notify("🚛 Vehicle stationary",`You've been stopped for ${mins} minutes. This pause is being recorded.`,"pause_detect");
+                vibrate("warning");
+              } else if(g.currentPauseId){
+                // Update ongoing pause duration
+                setDetectedPauses(prev=>{
+                  const updated=prev.map(p=>p.id===g.currentPauseId?{...p,mins:mins,end:null}:p);
+                  Cloud.set(`pauses_${user.id}_${today()}`,updated);
+                  return updated;
+                });
+              }
+            } else {
+              // Moving again — close any active pause
+              if(g.currentPauseId){
+                const endTime=new Date().toISOString();
+                const finalMins=Math.floor((now-g.stationarySince)/60000);
+                setDetectedPauses(prev=>{
+                  const updated=prev.map(p=>p.id===g.currentPauseId?{...p,end:endTime,mins:finalMins}:p);
+                  Cloud.set(`pauses_${user.id}_${today()}`,updated);
+                  return updated;
+                });
+                g.currentPauseId=null;
+              }
+              g.stationarySince=null;
+            }
+          }
+          g.lastPos={lat,lng};
+        },()=>{},{enableHighAccuracy:true,timeout:10000});
+      };
+      checkPos();
+      const gpsIv=setInterval(checkPos,30000);
+      return()=>{
+        clearInterval(gpsIv);
+        // Close any active pause on status change
+        if(g.currentPauseId){
+          const endTime=new Date().toISOString();
+          const finalMins=g.stationarySince?Math.floor((Date.now()-g.stationarySince)/60000):0;
+          setDetectedPauses(prev=>{
+            const updated=prev.map(p=>p.id===g.currentPauseId?{...p,end:endTime,mins:finalMins}:p);
+            Cloud.set(`pauses_${user.id}_${today()}`,updated);
+            return updated;
+          });
+          g.currentPauseId=null;
+        }
+        g.lastPos=null;g.stationarySince=null;
+      };
+    }
+  },[status]);
+
+  // Convert a detected pause into a break — deducts from driving time
+  const convertPauseToBreak=async(pauseId)=>{
+    const p=detectedPauses.find(x=>x.id===pauseId);
+    if(!p||p.converted)return;
+    const breakSecs=p.mins*60;
+
+    // Update the detected pause as converted
+    const updated=detectedPauses.map(x=>x.id===pauseId?{...x,converted:true}:x);
+    setDetectedPauses(updated);
+    await Cloud.set(`pauses_${user.id}_${today()}`,updated);
+
+    // Deduct from current session driving time
+    if(status!=="stopped"){
+      setAccumDrive(prev=>Math.max(0,prev-breakSecs));
+      setAccumCont(prev=>Math.max(0,prev-breakSecs));
+    }
+
+    // Also update today's session records to log the break
+    const tk=today();
+    const sessions=(await Cloud.get(`sess_${user.id}_${tk}`))||[];
+    sessions.push({
+      id:Date.now(),
+      s:p.start,
+      e:p.end||new Date().toISOString(),
+      d:0,
+      b:breakSecs,
+      type:"converted_pause"
+    });
+    await Cloud.set(`sess_${user.id}_${tk}`,sessions);
+    await loadTotals();
+    vibrate("warning");
+  };
+
+  // Dismiss a detected pause without converting
+  const dismissPause=async(pauseId)=>{
+    const updated=detectedPauses.filter(x=>x.id!==pauseId);
+    setDetectedPauses(updated);
+    await Cloud.set(`pauses_${user.id}_${today()}`,updated);
+  };
+
+  // Calculate display seconds from real timestamps — no drift possible
+  const tick=()=>{
+    const now=Date.now();
+    if(driveStartAt){
+      const elapsed=Math.floor((now-driveStartAt)/1000);
+      setDSec(accumDrive+elapsed);
+      setCSec(accumCont+elapsed);
+    }
+    if(breakStartAt){
+      setBSec(Math.floor((now-breakStartAt)/1000));
+    }
+  };
 
   const loadTotals=async()=>{
     const tk=today(),ts=(await Cloud.get(`sess_${user.id}_${tk}`))||[];
@@ -279,22 +438,51 @@ function TimerPage({user}){
     setWeeklyT(wt);
   };
 
+  // Restore state on mount
   useEffect(()=>{(async()=>{
     const a=Local.get(`act_${user.id}`);
-    if(a&&a.st!=="stopped"){const el=Math.floor((Date.now()-a.tick)/1000);setStatus(a.st);setSessStart(a.ss);
-      if(a.st==="driving"){setDSec(a.d+el);setCSec(a.c+el);}
-      else if(a.st==="break"){setBSec(a.b+el);setDSec(a.d);setCSec(a.c);}}
-    await loadTotals();setPageLoading(false);
+    if(a&&a.st!=="stopped"){
+      setSessStart(a.ss);
+      if(a.st==="driving"){
+        // Restore: driveStartAt was saved, so elapsed is calculated from it
+        setStatus("driving");
+        setDriveStartAt(a.driveStartAt||Date.now());
+        setContStartAt(a.contStartAt||Date.now());
+        setAccumDrive(a.accumDrive||0);
+        setAccumCont(a.accumCont||0);
+      } else if(a.st==="break"){
+        setStatus("break");
+        setBreakStartAt(a.breakStartAt||Date.now());
+        setAccumDrive(a.accumDrive||0);
+        setAccumCont(a.accumCont||0);
+        setDSec(a.accumDrive||0);
+        setCSec(a.accumCont||0);
+      }
+    }
+    await loadTotals();await loadPauses();setPageLoading(false);
   })();},[]);
 
-  useEffect(()=>{Local.set(`act_${user.id}`,{st:status,d:dSec,c:cSec,b:bSec,ss:sessStart,tick:Date.now()});},[status,dSec,cSec,bSec]);
+  // Save state to localStorage for recovery
+  useEffect(()=>{
+    Local.set(`act_${user.id}`,{
+      st:status, ss:sessStart,
+      driveStartAt, contStartAt, breakStartAt,
+      accumDrive, accumCont,
+      d:dSec, c:cSec, b:bSec
+    });
+  },[status,dSec,cSec,bSec,driveStartAt,contStartAt,breakStartAt,accumDrive,accumCont]);
 
-  useEffect(()=>{clearInterval(iv.current);
-    if(status==="driving")iv.current=setInterval(()=>{setDSec(s=>s+1);setCSec(s=>s+1);},1000);
-    else if(status==="break")iv.current=setInterval(()=>{setBSec(s=>s+1);},1000);
-    return()=>clearInterval(iv.current);},[status]);
+  // Tick interval — just triggers recalculation, doesn't count
+  useEffect(()=>{
+    clearInterval(iv.current);
+    if(status==="driving"||status==="break"){
+      tick(); // immediate first tick
+      iv.current=setInterval(tick,1000);
+    }
+    return()=>clearInterval(iv.current);
+  },[status,driveStartAt,contStartAt,breakStartAt,accumDrive,accumCont]);
 
-  useEffect(()=>{if(status==="break"&&bSec>=RULES.reqBreak)setCSec(0);},[bSec,status]);
+  useEffect(()=>{if(status==="break"&&bSec>=RULES.reqBreak){setAccumCont(0);setCSec(0);}},[bSec,status]);
 
   useEffect(()=>{
     if(status==="driving")document.title=`🟢 ${fmt(dSec)} — Haulage HQ`;
@@ -304,20 +492,48 @@ function TimerPage({user}){
 
   useEffect(()=>{
     const w=[],td=dailyT+(status==="driving"?dSec:0),tw=weeklyT+(status==="driving"?dSec:0);
-    if(cSec>=RULES.maxCont){w.push({l:"critical",m:"4.5h continuous reached — take 45-min break NOW"});fireIfNew("cont_limit","⛔ STOP — 4.5h Limit","Take a 45-min break now.");}
-    else if(cSec>=RULES.maxCont-1800){w.push({l:"warning",m:`${fmt(RULES.maxCont-cSec)} until mandatory break`});fireIfNew("cont_30","⚠️ 30 Min Until Break",`${fmt(RULES.maxCont-cSec)} remaining.`);}
+    if(cSec>=RULES.maxCont){w.push({l:"critical",m:"4.5h continuous reached — take 45-min break NOW"});fireIfNew("cont_limit","⛔ STOP — 4.5h Limit","Take a 45-min break now.","critical");}
+    else if(cSec>=RULES.maxCont-1800){w.push({l:"warning",m:`${fmt(RULES.maxCont-cSec)} until mandatory break`});fireIfNew("cont_30","⚠️ 30 Min Until Break",`${fmt(RULES.maxCont-cSec)} remaining.`,"warning");}
     else{resetNotified("cont_");}
-    if(td>=RULES.maxDaily){w.push({l:"critical",m:"9-hour daily limit — STOP"});fireIfNew("daily_limit","⛔ 9h Daily Limit","Stop driving now.");}
-    else if(td>=RULES.maxDaily-3600){w.push({l:"warning",m:`${fmt(RULES.maxDaily-td)} daily remaining`});fireIfNew("daily_1h","⚠️ 1h Daily Left",`${fmt(RULES.maxDaily-td)} of 9h left.`);}
+    if(td>=RULES.maxDaily){w.push({l:"critical",m:"9-hour daily limit — STOP"});fireIfNew("daily_limit","⛔ 9h Daily Limit","Stop driving now.","critical");}
+    else if(td>=RULES.maxDaily-3600){w.push({l:"warning",m:`${fmt(RULES.maxDaily-td)} daily remaining`});fireIfNew("daily_1h","⚠️ 1h Daily Left",`${fmt(RULES.maxDaily-td)} of 9h left.`,"warning");}
     else{resetNotified("daily_");}
-    if(tw>=RULES.maxWeekly){w.push({l:"critical",m:"56h weekly limit reached"});fireIfNew("week_limit","⛔ 56h Weekly Limit","Weekly limit reached.");}
-    else if(tw>=RULES.maxWeekly-14400){w.push({l:"warning",m:`${fmt(RULES.maxWeekly-tw)} weekly remaining`});fireIfNew("week_4h","⚠️ 4h Weekly Left",`${fmt(RULES.maxWeekly-tw)} of 56h left.`);}
+    if(tw>=RULES.maxWeekly){w.push({l:"critical",m:"56h weekly limit reached"});fireIfNew("week_limit","⛔ 56h Weekly Limit","Weekly limit reached.","critical");}
+    else if(tw>=RULES.maxWeekly-14400){w.push({l:"warning",m:`${fmt(RULES.maxWeekly-tw)} weekly remaining`});fireIfNew("week_4h","⚠️ 4h Weekly Left",`${fmt(RULES.maxWeekly-tw)} of 56h left.`,"warning");}
     else{resetNotified("week_");}
     setWarnings(w);
   },[dSec,cSec,dailyT,weeklyT,status]);
 
-  const go=()=>{setStatus("driving");setBSec(0);if(!sessStart)setSessStart(new Date().toISOString());};
-  const pause=()=>{setStatus("break");setBSec(0);};
+  const go=()=>{
+    const now=Date.now();
+    if(status==="stopped"){
+      // Fresh start
+      setDriveStartAt(now);setContStartAt(now);
+      setAccumDrive(0);setAccumCont(0);
+      setBSec(0);setBreakStartAt(null);
+      if(!sessStart)setSessStart(new Date().toISOString());
+    } else if(status==="break"){
+      // Resume from break — accumulate break-phase driving, restart drive clock
+      setDriveStartAt(now);
+      // If break was long enough, continuous resets
+      if(bSec>=RULES.reqBreak){setContStartAt(now);setAccumCont(0);}
+      else{setContStartAt(now);/* accumCont already set */}
+      setBreakStartAt(null);setBSec(0);
+    }
+    setStatus("driving");
+  };
+  const pause=()=>{
+    // Freeze driving totals into accumulators
+    const now=Date.now();
+    if(driveStartAt){
+      const elapsed=Math.floor((now-driveStartAt)/1000);
+      setAccumDrive(prev=>prev+elapsed);
+      setAccumCont(prev=>prev+elapsed);
+    }
+    setDriveStartAt(null);setContStartAt(null);
+    setBreakStartAt(now);setBSec(0);
+    setStatus("break");
+  };
   const stop=async()=>{
     const s={id:Date.now(),s:sessStart||new Date().toISOString(),e:new Date().toISOString(),d:dSec,b:status==="break"?bSec:0};
     const tk=today(),ex=(await Cloud.get(`sess_${user.id}_${tk}`))||[];
@@ -325,7 +541,9 @@ function TimerPage({user}){
     const days=(await Cloud.get(`days_${user.id}`))||[];
     if(!days.includes(tk)){days.push(tk);await Cloud.set(`days_${user.id}`,days);}
     setStatus("stopped");setDSec(0);setCSec(0);setBSec(0);setSessStart(null);
-    Local.del(`act_${user.id}`);notifiedRef.current.clear();await loadTotals();
+    setDriveStartAt(null);setContStartAt(null);setBreakStartAt(null);
+    setAccumDrive(0);setAccumCont(0);
+    Local.del(`act_${user.id}`);notifiedRef.current.clear();await loadTotals();await loadPauses();
   };
 
   if(pageLoading)return<div style={{textAlign:"center",padding:40}}><div className="spinner" style={{margin:"0 auto 12px"}}/><p className="loading-text">Loading dashboard...</p></div>;
@@ -351,6 +569,35 @@ function TimerPage({user}){
       <Gauge label="This Week" value={fmt(tw)} max="56h 00m" percent={Math.min(tw/RULES.maxWeekly*100,100)} color={tw/RULES.maxWeekly>.85?"var(--red)":"var(--blue)"}/>
     </div>
     {sessions.length>0&&<div className="card"><div className="card-title">Today's Sessions</div>{sessions.map((s,i)=>(<div key={i} className="session-row"><span className="session-time">{fmtDT(s.s)} → {fmtDT(s.e)}</span><span className="session-dur">{fmt(s.d)}</span></div>))}</div>}
+    {detectedPauses.filter(p=>!p.converted).length>0&&(
+      <div className="card">
+        <div className="card-title">📍 Detected Pauses</div>
+        <p style={{color:"var(--text-dim)",fontSize:13,marginBottom:14}}>Your vehicle was stationary during driving. Add as break to deduct from driving time.</p>
+        {detectedPauses.filter(p=>!p.converted).map(p=>(
+          <div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.04)",gap:10,flexWrap:"wrap"}}>
+            <div style={{flex:1,minWidth:140}}>
+              <div style={{fontSize:13,color:"var(--text-dim)"}}>{fmtDT(p.start)}{p.end?" → "+fmtDT(p.end):" → ongoing"}</div>
+              <div style={{fontSize:16,fontWeight:700,fontFamily:"var(--mono)",color:"var(--amber)",marginTop:2}}>{p.mins} min{p.mins!==1?"s":""}</div>
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button className="btn-small" onClick={()=>convertPauseToBreak(p.id)} style={{background:"rgba(34,197,94,0.12)",borderColor:"rgba(34,197,94,0.3)",color:"#86EFAC"}}>✓ Add as break</button>
+              <button className="btn-small" onClick={()=>dismissPause(p.id)}>✕ Dismiss</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+    {detectedPauses.filter(p=>p.converted).length>0&&(
+      <div className="card">
+        <div className="card-title" style={{color:"var(--green)"}}>✓ Converted Breaks</div>
+        {detectedPauses.filter(p=>p.converted).map(p=>(
+          <div key={p.id} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+            <span style={{fontSize:13,color:"var(--text-dim)"}}>{fmtDT(p.start)}{p.end?" → "+fmtDT(p.end):""}</span>
+            <span style={{fontSize:14,fontWeight:600,fontFamily:"var(--mono)",color:"#86EFAC"}}>{p.mins} min break</span>
+          </div>
+        ))}
+      </div>
+    )}
   </div>);
 }
 
@@ -485,7 +732,13 @@ function AdminDriverView(){
 // ── MAIN APP ─────────────────────────────────────────────
 function App(){
   const[user,setUser]=useState(null);const[page,setPage]=useState("dashboard");const[ready,setReady]=useState(false);
+  const[online,setOnline]=useState(navigator.onLine);
   useEffect(()=>{const l=Local.get("lastUser");if(l)setUser(l);setReady(true);},[]);
+  useEffect(()=>{
+    const on=()=>setOnline(true); const off=()=>setOnline(false);
+    window.addEventListener("online",on); window.addEventListener("offline",off);
+    return()=>{window.removeEventListener("online",on);window.removeEventListener("offline",off);};
+  },[]);
   const login=u=>{setUser(u);Local.set("lastUser",u);setPage(u.role==="admin"?"admin":"dashboard");};
   const logout=()=>{setUser(null);Local.del("lastUser");setPage("dashboard");};
   if(!ready)return<div className="loading-screen"><div className="spinner"/></div>;
@@ -494,6 +747,7 @@ function App(){
   const nav=isAdmin?[{id:"admin",icon:"⚙️",label:"Drivers"},{id:"records",icon:"📋",label:"Records"},{id:"rules",icon:"📖",label:"Rules"}]
     :[{id:"dashboard",icon:"⏱",label:"Dashboard"},{id:"history",icon:"📋",label:"History"},{id:"export",icon:"⬇",label:"Export"},{id:"rules",icon:"📖",label:"Rules"}];
   return(<div>
+    {!online&&<div style={{background:"#B45309",color:"#fff",textAlign:"center",padding:"8px 16px",fontSize:13,fontWeight:600,letterSpacing:.5}}>📡 Offline — timer still running, data will sync when reconnected</div>}
     <header className="app-header"><div className="header-left"><Logo/><span className="header-brand">HAULAGE HQ</span></div>
       <div className="header-right">{isAdmin&&<span className="admin-badge">ADMIN</span>}<span className="driver-badge">{user.name}</span><button className="btn-signout" onClick={logout}>Sign Out</button></div></header>
     <nav className="app-nav">{nav.map(n=>(<button key={n.id} className={`nav-btn ${page===n.id?"active":""}`} onClick={()=>setPage(n.id)}><span>{n.icon}</span><span>{n.label}</span></button>))}</nav>
